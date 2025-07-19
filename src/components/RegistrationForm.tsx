@@ -111,7 +111,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
               {...form.register('name')}
               placeholder="Enter your full name"
             />
-            {form.formState.errors.name && (
+            {form.formState.errors.name?.message && (
               <p className="text-sm text-red-600">{form.formState.errors.name.message}</p>
             )}
           </div>
@@ -124,7 +124,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
               {...form.register('email')}
               placeholder="Enter your email"
             />
-            {form.formState.errors.email && (
+            {form.formState.errors.email?.message && (
               <p className="text-sm text-red-600">{form.formState.errors.email.message}</p>
             )}
           </div>
@@ -137,7 +137,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
               {...form.register('password')}
               placeholder="Enter your password"
             />
-            {form.formState.errors.password && (
+            {form.formState.errors.password?.message && (
               <p className="text-sm text-red-600">{form.formState.errors.password.message}</p>
             )}
           </div>
@@ -151,7 +151,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                   {...form.register('qualifications')}
                   placeholder="e.g., MBBS, MD, MS"
                 />
-                {form.formState.errors.qualifications && (
+                {form.formState.errors.qualifications?.message && (
                   <p className="text-sm text-red-600">{form.formState.errors.qualifications.message}</p>
                 )}
               </div>
@@ -165,7 +165,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                   {...form.register('yearsOfExperience', { valueAsNumber: true })}
                   placeholder="Enter years of experience"
                 />
-                {form.formState.errors.yearsOfExperience && (
+                {form.formState.errors.yearsOfExperience?.message && (
                   <p className="text-sm text-red-600">{form.formState.errors.yearsOfExperience.message}</p>
                 )}
               </div>
@@ -186,7 +186,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                     <SelectItem value="other">Other</SelectItem>
                   </SelectContent>
                 </Select>
-                {form.formState.errors.gender && (
+                {form.formState.errors.gender?.message && (
                   <p className="text-sm text-red-600">{form.formState.errors.gender.message}</p>
                 )}
               </div>
@@ -216,7 +216,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                     />
                   </PopoverContent>
                 </Popover>
-                {form.formState.errors.dateOfBirth && (
+                {form.formState.errors.dateOfBirth?.message && (
                   <p className="text-sm text-red-600">{form.formState.errors.dateOfBirth.message}</p>
                 )}
               </div>
@@ -228,7 +228,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                   {...form.register('uniqueId')}
                   placeholder="Enter your Aadhar or Passport number"
                 />
-                {form.formState.errors.uniqueId && (
+                {form.formState.errors.uniqueId?.message && (
                   <p className="text-sm text-red-600">{form.formState.errors.uniqueId.message}</p>
                 )}
               </div>
