@@ -187,7 +187,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                   </SelectContent>
                 </Select>
                 {form.formState.errors.gender?.message && (
-                  <p className="text-sm text-red-600">{form.formState.errors.gender.message}</p>
+                  <p className="text-sm text-red-600">{form.formState.errors.gender?.message}</p>
                 )}
               </div>
 
@@ -217,7 +217,7 @@ export const RegistrationForm = ({ role, onBack }: RegistrationFormProps) => {
                   </PopoverContent>
                 </Popover>
                 {form.formState.errors.dateOfBirth?.message && (
-                  <p className="text-sm text-red-600">{form.formState.errors.dateOfBirth.message}</p>
+                  <p className="text-sm text-red-600">{form.formState.errors.dateOfBirth?.message}</p>
                 )}
               </div>
 
