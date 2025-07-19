@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
 import { supabase } from '@/integrations/supabase/client'
@@ -93,13 +94,18 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const fetchUserProfile = async (userId: string) => {
     try {
       // First, get user role from user_profiles table
-      const { data: profileData, error: profileError } = await supabase
+      const { data: profileData, error: profileError } = await (supabase as any)
         .from('user_profiles')
         .select('role')
         .eq('id', userId)
         .single()
 
       if (profileError) throw profileError
+      if (!profileData) {
+        console.log('No profile data found for user')
+        setLoading(false)
+        return
+      }
 
       const role = profileData.role
       setUserRole(role)
@@ -108,13 +114,13 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       let profileQuery
       switch (role) {
         case 'admin':
-          profileQuery = supabase.from('admin_profiles').select('*').eq('user_id', userId).single()
+          profileQuery = (supabase as any).from('admin_profiles').select('*').eq('user_id', userId).single()
           break
         case 'doctor':
-          profileQuery = supabase.from('doctor_profiles').select('*').eq('user_id', userId).single()
+          profileQuery = (supabase as any).from('doctor_profiles').select('*').eq('user_id', userId).single()
           break
         case 'patient':
-          profileQuery = supabase.from('patient_profiles').select('*').eq('user_id', userId).single()
+          profileQuery = (supabase as any).from('patient_profiles').select('*').eq('user_id', userId).single()
           break
         default:
           throw new Error('Invalid user role')
@@ -142,7 +148,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       if (!authData.user) throw new Error('No user returned from signup')
 
       // Create user profile record
-      const { error: profileError } = await supabase
+      const { error: profileError } = await (supabase as any)
         .from('user_profiles')
         .insert([{ id: authData.user.id, email, role }])
 
@@ -183,7 +189,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           throw new Error('Invalid role')
       }
 
-      const { error: roleError } = await supabase
+      const { error: roleError } = await (supabase as any)
         .from(tableName)
         .insert([roleProfileData])
 
@@ -226,7 +232,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
         throw new Error('Invalid user role')
     }
 
-    const { error } = await supabase
+    const { error } = await (supabase as any)
       .from(tableName)
       .update(profileData)
       .eq('user_id', user.id)

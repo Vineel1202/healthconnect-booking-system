@@ -1,3 +1,4 @@
+
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { supabase } from '@/integrations/supabase/client'
 import { useAuth } from '@/contexts/AuthContext'
@@ -34,7 +35,7 @@ export const useHospitals = () => {
     queryFn: async () => {
       if (!user) return []
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('hospitals')
         .select('*')
         .eq('admin_id', user.id)
@@ -50,7 +51,7 @@ export const useHospitals = () => {
     mutationFn: async ({ name, location }: { name: string; location: string }) => {
       if (!user) throw new Error('User not authenticated')
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('hospitals')
         .insert([{ name, location, admin_id: user.id }])
         .select()
@@ -66,7 +67,7 @@ export const useHospitals = () => {
 
   const updateHospitalMutation = useMutation({
     mutationFn: async ({ id, name, location }: { id: string; name: string; location: string }) => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('hospitals')
         .update({ name, location })
         .eq('id', id)
@@ -83,7 +84,7 @@ export const useHospitals = () => {
 
   const deleteHospitalMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('hospitals')
         .delete()
         .eq('id', id)
@@ -113,7 +114,7 @@ export const useDepartments = (hospitalId?: string) => {
     queryFn: async () => {
       if (!hospitalId) return []
       
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('departments')
         .select('*')
         .eq('hospital_id', hospitalId)
@@ -128,7 +129,7 @@ export const useDepartments = (hospitalId?: string) => {
   const { data: commonDepartments } = useQuery({
     queryKey: ['common-departments'],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('common_departments')
         .select('*')
         .order('name', { ascending: true })
@@ -140,7 +141,7 @@ export const useDepartments = (hospitalId?: string) => {
 
   const createDepartmentMutation = useMutation({
     mutationFn: async ({ name, hospitalId: hId }: { name: string; hospitalId: string }) => {
-      const { data, error } = await supabase
+      const { data, error } = await (supabase as any)
         .from('departments')
         .insert([{ name, hospital_id: hId }])
         .select()
@@ -156,7 +157,7 @@ export const useDepartments = (hospitalId?: string) => {
 
   const deleteDepartmentMutation = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase
+      const { error } = await (supabase as any)
         .from('departments')
         .delete()
         .eq('id', id)
