@@ -1,55 +1,47 @@
+
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { UserPlus, Building2, Stethoscope, Users, Calendar, TrendingUp } from 'lucide-react';
-import { AdminDashboard } from '@/components/AdminDashboard';
-import { DoctorDashboard } from '@/components/DoctorDashboard';
-import { PatientDashboard } from '@/components/PatientDashboard';
 import { LoginForm } from '@/components/LoginForm';
+import { RegistrationForm } from '@/components/RegistrationForm';
+import { Dashboard } from '@/components/Dashboard';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Index = () => {
-  const [currentUser, setCurrentUser] = useState<string | null>(null);
-  const [userRole, setUserRole] = useState<'admin' | 'doctor' | 'patient' | null>(null);
+  const [showRegistration, setShowRegistration] = useState(false);
+  const [registrationRole, setRegistrationRole] = useState<'admin' | 'doctor' | 'patient'>('admin');
+  const { user, loading } = useAuth();
 
-  const handleLogin = (role: 'admin' | 'doctor' | 'patient', email: string) => {
-    setCurrentUser(email);
-    setUserRole(role);
-  };
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50 flex items-center justify-center">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-medical-blue mx-auto mb-4"></div>
+          <p className="text-muted-foreground">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
-  const handleLogout = () => {
-    setCurrentUser(null);
-    setUserRole(null);
-  };
+  if (user) {
+    return <Dashboard />;
+  }
 
-  if (currentUser && userRole) {
+  if (showRegistration) {
     return (
       <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-green-50">
-        <header className="bg-white shadow-sm border-b">
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-            <div className="flex justify-between items-center">
-              <div className="flex items-center space-x-3">
-                <div className="bg-gradient-medical p-2 rounded-lg">
-                  <Stethoscope className="h-6 w-6 text-white" />
-                </div>
-                <div>
-                  <h1 className="text-xl font-bold text-medical-navy">MediCare System</h1>
-                  <p className="text-sm text-muted-foreground capitalize">{userRole} Dashboard</p>
-                </div>
-              </div>
-              <div className="flex items-center space-x-4">
-                <span className="text-sm text-muted-foreground">Welcome, {currentUser}</span>
-                <Button variant="outline" onClick={handleLogout}>Logout</Button>
-              </div>
-            </div>
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
+          <div className="text-center mb-8">
+            <h1 className="text-3xl font-bold text-medical-navy mb-4">Create Your Account</h1>
+            <p className="text-muted-foreground text-lg">Join the MediCare System</p>
           </div>
-        </header>
-
-        <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          {userRole === 'admin' && <AdminDashboard />}
-          {userRole === 'doctor' && <DoctorDashboard />}
-          {userRole === 'patient' && <PatientDashboard />}
-        </main>
+          <RegistrationForm 
+            role={registrationRole} 
+            onBack={() => setShowRegistration(false)} 
+          />
+        </div>
       </div>
     );
   }
@@ -92,8 +84,8 @@ const Index = () => {
       {/* Login Section */}
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
         <div className="text-center mb-12">
-          <h2 className="text-3xl font-bold text-medical-navy mb-4">Choose Your Role</h2>
-          <p className="text-muted-foreground text-lg">Select your user type to access the appropriate dashboard</p>
+          <h2 className="text-3xl font-bold text-medical-navy mb-4">Access Your Account</h2>
+          <p className="text-muted-foreground text-lg">Login to your dashboard or create a new account</p>
         </div>
 
         <Tabs defaultValue="admin" className="w-full">
@@ -124,7 +116,19 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <LoginForm role="admin" onLogin={handleLogin} />
+                <LoginForm role="admin" />
+                <div className="mt-4 text-center">
+                  <Button 
+                    variant="link" 
+                    onClick={() => {
+                      setRegistrationRole('admin');
+                      setShowRegistration(true);
+                    }}
+                    className="text-medical-blue"
+                  >
+                    Don't have an account? Register here
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -141,7 +145,19 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <LoginForm role="doctor" onLogin={handleLogin} />
+                <LoginForm role="doctor" />
+                <div className="mt-4 text-center">
+                  <Button 
+                    variant="link" 
+                    onClick={() => {
+                      setRegistrationRole('doctor');
+                      setShowRegistration(true);
+                    }}
+                    className="text-medical-blue"
+                  >
+                    Don't have an account? Register here
+                  </Button>
+                </div>
               </CardContent>
             </Card>
           </TabsContent>
@@ -158,7 +174,19 @@ const Index = () => {
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                <LoginForm role="patient" onLogin={handleLogin} />
+                <LoginForm role="patient" />
+                <div className="mt-4 text-center">
+                  <Button 
+                    variant="link" 
+                    onClick={() => {
+                      setRegistrationRole('patient');
+                      setShowRegistration(true);
+                    }}
+                    className="text-medical-blue"
+                  >
+                    Don't have an account? Register here
+                  </Button>
+                </div>                
               </CardContent>
             </Card>
           </TabsContent>

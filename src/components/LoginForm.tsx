@@ -1,49 +1,67 @@
+
 import { useState } from 'react';
+import { useForm } from 'react-hook-form';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { z } from 'zod';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Card, CardContent } from '@/components/ui/card';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from '@/hooks/use-toast';
+
+const loginSchema = z.object({
+  email: z.string().email('Invalid email address'),
+  password: z.string().min(1, 'Password is required'),
+});
 
 interface LoginFormProps {
   role: 'admin' | 'doctor' | 'patient';
-  onLogin: (role: 'admin' | 'doctor' | 'patient', email: string) => void;
 }
 
-export const LoginForm = ({ role, onLogin }: LoginFormProps) => {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+export const LoginForm = ({ role }: LoginFormProps) => {
+  const [isLoading, setIsLoading] = useState(false);
+  const { signIn } = useAuth();
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (email && password) {
-      onLogin(role, email);
+  const form = useForm({
+    resolver: zodResolver(loginSchema),
+    defaultValues: {
+      email: '',
+      password: '',
+    },
+  });
+
+  const handleSubmit = async (data: { email: string; password: string }) => {
+    setIsLoading(true);
+    try {
+      await signIn(data.email, data.password);
+      toast({
+        title: "Login successful!",
+        description: "Welcome to MediCare System",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Login failed",
+        description: error.message || "Invalid email or password",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  // Demo credentials for each role
-  const demoCredentials = {
-    admin: { email: 'admin@hospital.com', password: 'admin123' },
-    doctor: { email: 'doctor@hospital.com', password: 'doctor123' },
-    patient: { email: 'patient@hospital.com', password: 'patient123' },
-  };
-
-  const loadDemo = () => {
-    setEmail(demoCredentials[role].email);
-    setPassword(demoCredentials[role].password);
-  };
-
   return (
-    <form onSubmit={handleSubmit} className="space-y-4">
+    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="email">Email</Label>
         <Input
           id="email"
           type="email"
           placeholder="Enter your email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
+          {...form.register('email')}
         />
+        {form.formState.errors.email && (
+          <p className="text-sm text-red-600">{form.formState.errors.email.message}</p>
+        )}
       </div>
       
       <div className="space-y-2">
@@ -52,38 +70,20 @@ export const LoginForm = ({ role, onLogin }: LoginFormProps) => {
           id="password"
           type="password"
           placeholder="Enter your password"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
+          {...form.register('password')}
         />
+        {form.formState.errors.password && (
+          <p className="text-sm text-red-600">{form.formState.errors.password.message}</p>
+        )}
       </div>
 
-      <div className="space-y-3">
-        <Button type="submit" className="w-full bg-gradient-medical hover:opacity-90">
-          Login as {role.charAt(0).toUpperCase() + role.slice(1)}
-        </Button>
-        
-        <Card className="bg-muted/50">
-          <CardContent className="p-3">
-            <div className="text-xs text-muted-foreground mb-2">
-              Demo Credentials:
-            </div>
-            <div className="text-xs space-y-1">
-              <div>Email: {demoCredentials[role].email}</div>
-              <div>Password: {demoCredentials[role].password}</div>
-            </div>
-            <Button 
-              type="button" 
-              variant="outline" 
-              size="sm" 
-              onClick={loadDemo}
-              className="w-full mt-2"
-            >
-              Use Demo Credentials
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
+      <Button 
+        type="submit" 
+        className="w-full bg-gradient-medical hover:opacity-90"
+        disabled={isLoading}
+      >
+        {isLoading ? 'Logging in...' : `Login as ${role.charAt(0).toUpperCase() + role.slice(1)}`}
+      </Button>
     </form>
   );
 };
