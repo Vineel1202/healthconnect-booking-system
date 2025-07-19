@@ -1,7 +1,37 @@
-
 import React, { createContext, useContext, useEffect, useState } from 'react'
 import { User, Session } from '@supabase/supabase-js'
-import { supabase, UserProfile, AdminProfile, DoctorProfile, PatientProfile } from '@/lib/supabase'
+import { supabase } from '@/integrations/supabase/client'
+
+// Database types
+export interface UserProfile {
+  id: string
+  email: string
+  role: 'admin' | 'doctor' | 'patient'
+  created_at: string
+}
+
+export interface AdminProfile {
+  user_id: string
+  name: string
+  created_at: string
+}
+
+export interface DoctorProfile {
+  user_id: string
+  name: string
+  qualifications: string
+  years_of_experience: number
+  created_at: string
+}
+
+export interface PatientProfile {
+  user_id: string
+  name: string
+  gender: 'male' | 'female' | 'other'
+  date_of_birth: string
+  unique_id: string
+  created_at: string
+}
 
 interface AuthContextType {
   user: User | null
